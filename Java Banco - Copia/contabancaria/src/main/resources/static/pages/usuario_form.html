@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt_BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Usuário</title>
+</head>
+<body>
+    <form id="formEditarUsuario">
+        <input type="hidden" id="id" name="id">
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" name="nome"><br><br>
+        
+        <label for="sexo">Sexo:</label>
+        <select id="sexo" name="sexo">
+            <option value="M">Masculino</option>
+            <option value="F">Feminino</option>
+        </select><br><br>
+        
+        <label for="email">E-mail:</label>
+        <input type="email" id="email" name="email"><br><br>
+        
+        <label for="senha">Senha:</label>
+        <input type="password" id="senha" name="senha"><br><br>
+        
+        <button type="button" id="btnSalvar">Salvar</button>
+    </form>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Função para carregar os dados do usuário a ser editado
+            function carregarUsuarioParaEdicao(idUsuario) {
+                $.ajax({
+                    type: "GET",
+                    url: "/usuario/" + idUsuario,
+                    success: function (data) {
+                        console.log("User data loaded successfully:", data);
+                        $("#id").val(data.id);
+                        $("#nome").val(data.nome);
+                        $("#sexo").val(data.sexo);
+                        $("#email").val(data.email);
+                        $("#senha").val(data.senha);
+                    },
+                    error: function () {
+                        alert("Erro ao carregar usuário!");
+                    },
+                });
+            }
+
+            // Carregar dados do usuário quando a página carregar
+            let idUsuario = window.sessionStorage.getItem("idUsuario");
+            carregarUsuarioParaEdicao(idUsuario);
+
+            // Evento de clique no botão salvar
+            $('#btnSalvar').click(function () {
+                let usuario = {
+                    id: $('#id').val(),
+                    nome: $('#nome').val(),
+                    sexo: $('#sexo').val(),
+                    email: $('#email').val(),
+                    senha: $('#senha').val()
+                };
+                $.ajax({
+                    type: "PUT",
+                    url: "/usuario/editarUsuario",
+                    contentType: "application/json",
+                    data: JSON.stringify(usuario),
+                    success: function (response) {
+                        alert(response);
+                        window.location.href='/';
+                    },
+                    error: function () {
+                        alert("Erro ao editar usuário!");
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
